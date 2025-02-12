@@ -1,13 +1,18 @@
 import { HabitEntry } from "@prisma/client";
 import { HabitCell } from "./HabitCell";
 import dayjs from "dayjs";
+import { Asset } from "next/font/google";
+import assert from "assert";
 
 interface HabitTrackerProps {
     title: string;
+    habitId: string;
     entries: HabitEntry[];
 }
 
-export function HabitTracker({ title = '', entries = [] }: HabitTrackerProps) {
+export function HabitTracker({ title = '', habitId, entries = [] }: HabitTrackerProps) {
+    assert(title, 'Title is required');
+    assert(habitId, 'Habit ID is required');
 
     function getDatesGroupedByMonth(): Record<number, HabitEntry[]> {
         const currentYear = new Date().getFullYear();
@@ -35,7 +40,7 @@ export function HabitTracker({ title = '', entries = [] }: HabitTrackerProps) {
                     id: `${dateKey}-empty`,
                     date: currentDate,
                     count: 0,
-                    habitId: 'placeholder',
+                    habitId,
                     createdAt: currentDate,
                     updatedAt: currentDate
                 };

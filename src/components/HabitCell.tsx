@@ -3,13 +3,17 @@
 import { createHabitEntry, updateHabit } from "@/app/actions";
 import { cn } from "@/app/page";
 import { HabitEntry } from "@prisma/client";
+import assert from "assert";
 import dayjs from "dayjs";
-import { create } from "domain";
 import { Sparkles } from "lucide-react";
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 
-export function HabitCell({ id, habitId, date, count }: HabitEntry) {
+export function HabitCell({ id: initialId, habitId, date, count: initialCount }: HabitEntry) {
+    assert(habitId !== 'placeholder' || habitId, 'Habit ID is required');
     const longPressTimer = useRef<NodeJS.Timeout>();
+
+    const [count, setCountState] = useState(initialCount);
+    const [id, setId] = useState(initialId);
 
     const handleMouseDown = useCallback(() => {
         longPressTimer.current = setTimeout(() => {
@@ -30,13 +34,17 @@ export function HabitCell({ id, habitId, date, count }: HabitEntry) {
         }
     }, []);
 
-    const handleCellClick = () => {
-        // if id contains empty then it is a new entry
-        if (id.includes('empty')) {
-            createHabitEntry({ habitId, date, count: 1 });
-        } else {
-            updateHabit({ id, habitId, count: (count || 0) + 1 });            
+    const handleCellClick = async () => {
+        const isNewEntry = id.includes('empty');
+        const updatedEntry = isNewEntry
+            ? await createHabitEntry({ habitId, date, count: 1 })
+            : await updateHabit({ id, habitId, count: (count || 0) + 1 });
 
+        if (updatedEntry) {
+            setCountState(updatedEntry.count);
+            if (isNewEntry) {
+                setId(updatedEntry.id);
+            }
         }
     }
 

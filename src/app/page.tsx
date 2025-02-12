@@ -25,8 +25,10 @@ export default async function Home() {
       <main className="lg:col-span-10 mx-auto">
         <h1 className="text-3xl font-bold mb-8">Habit Tracker</h1>
         <div className="flex flex-col gap-10">
-          {habits.map(habit => <HabitTracker
+          {habits.map(habit => 
+          <HabitTracker
             title={habit.title}
+            habitId={habit.id}
             entries={habit.entries}
           />)}
         </div>
