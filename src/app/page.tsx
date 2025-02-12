@@ -1,5 +1,6 @@
 import { AddHabit } from "@/components/AddHabit";
 import { HabitTracker } from "@/components/HabitTracker";
+import { InfoButton } from "@/components/InfoButton";
 import { db } from "@/lib/db";
 
 import { type ClassValue, clsx } from 'clsx'
@@ -24,16 +25,19 @@ export default async function Home() {
   return (
     <div className="min-h-screen p-8 bg-black">
       <main className="w-full mx-auto">
-        <h1 className="text-3xl font-bold mb-8 text-white/80 text-center">habit tracker</h1>
+        <div className="flex justify-center items-center gap-2 mb-8">
+          <h1 className="text-3xl font-bold text-white/80">habit tracker</h1>
+          <InfoButton />
+        </div>
         <AddHabit />
         <div className="flex flex-col gap-10">
-          {habits.map(habit => 
-          <HabitTracker
-            key={habit.id}
-            title={habit.title}
-            habitId={habit.id}
-            entries={habit.entries}
-          />)}
+          {habits.map(habit =>
+            <HabitTracker
+              key={habit.id}
+              title={habit.title}
+              habitId={habit.id}
+              entries={habit.entries}
+            />)}
         </div>
       </main>
     </div>
