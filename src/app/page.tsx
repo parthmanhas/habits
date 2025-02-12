@@ -27,6 +27,7 @@ export default async function Home() {
         <div className="flex flex-col gap-10">
           {habits.map(habit => 
           <HabitTracker
+            key={habit.id}
             title={habit.title}
             habitId={habit.id}
             entries={habit.entries}
