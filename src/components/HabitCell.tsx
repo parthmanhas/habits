@@ -1,6 +1,6 @@
 "use client";
 
-import { createHabitEntry, updateHabit } from "@/app/actions";
+import { createHabitEntry, deleteHabitEntry, updateHabit } from "@/app/actions";
 import { cn } from "@/app/page";
 import { HabitEntry } from "@prisma/client";
 import assert from "assert";
@@ -10,31 +10,42 @@ import { useCallback, useRef, useState } from "react";
 
 export function HabitCell({ id: initialId, habitId, date, count: initialCount }: HabitEntry) {
     assert(habitId !== 'placeholder' || habitId, 'Habit ID is required');
-    const longPressTimer = useRef<NodeJS.Timeout>();
 
     const [count, setCountState] = useState(initialCount);
     const [id, setId] = useState(initialId);
+    const timerRef = useRef<NodeJS.Timeout>(null);
+    const [isLongPress, setIsLongPress] = useState(false);
 
-    const handleMouseDown = useCallback(() => {
-        longPressTimer.current = setTimeout(() => {
-            updateHabit({ id, habitId, count: 0 });
-        }, 500); // 500ms for long press
-    }, [habitId, id]);
-
-    const handleMouseUp = useCallback(() => {
-        if (longPressTimer.current) {
-            clearTimeout(longPressTimer.current);
-            updateHabit({ id, habitId, count: (count || 0) + 1 });
+    const handleLongPress = useCallback(async () => {
+        if (!id.includes('empty')) {
+            const deleted = await deleteHabitEntry(id);
+            if (deleted) {
+                setCountState(0);
+                setId(`${dayjs(date).format('YYYY-MM-DD')}-empty`);
+            }
         }
-    }, [count, habitId, id]);
+    }, [id, date]);
 
-    const handleMouseLeave = useCallback(() => {
-        if (longPressTimer.current) {
-            clearTimeout(longPressTimer.current);
+    const startPressTimer = useCallback(() => {
+        setIsLongPress(false);
+        timerRef.current = setTimeout(() => {
+            setIsLongPress(true);
+            handleLongPress();
+        }, 500); // 500ms for long press
+    }, [handleLongPress]);
+
+    const cancelPressTimer = useCallback(() => {
+        if (timerRef.current) {
+            clearTimeout(timerRef.current);
         }
     }, []);
 
     const handleCellClick = async () => {
+        if (isLongPress) {
+            setIsLongPress(false);
+            return;
+        }
+
         const isNewEntry = id.includes('empty');
         const updatedEntry = isNewEntry
             ? await createHabitEntry({ habitId, date, count: 1 })
@@ -46,7 +57,7 @@ export function HabitCell({ id: initialId, habitId, date, count: initialCount }:
                 setId(updatedEntry.id);
             }
         }
-    }
+    };
 
     return (
         <div
@@ -61,11 +72,11 @@ export function HabitCell({ id: initialId, habitId, date, count: initialCount }:
                 count > 5 && "bg-red-500",
             )}
             onClick={handleCellClick}
-        // onMouseDown={handleMouseDown}
-        // onMouseUp={handleMouseUp}
-        // onMouseLeave={handleMouseLeave}
-        // onTouchStart={handleMouseDown}
-        // onTouchEnd={handleMouseUp}
+            onMouseDown={startPressTimer}
+            onMouseUp={cancelPressTimer}
+            onMouseLeave={cancelPressTimer}
+            onTouchStart={startPressTimer}
+            onTouchEnd={cancelPressTimer}
         >
             <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                 {count || ''}

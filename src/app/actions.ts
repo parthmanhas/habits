@@ -43,3 +43,15 @@ export async function createHabitEntry({ habitId, date, count }: Omit<HabitEntry
         return null;
     }
 }
+
+export async function deleteHabitEntry(id: string) {
+    try {
+        await db.habitEntry.delete({
+            where: { id }
+        });
+        return true;
+    } catch (error) {
+        console.error('Error deleting habit entry:', error);
+        return false;
+    }
+}
