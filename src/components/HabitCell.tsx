@@ -46,6 +46,10 @@ export function HabitCell({ id: initialId, habitId, date, count: initialCount }:
             return;
         }
 
+        if(dayjs(date).isAfter(new Date(), 'day')) {
+            return;
+        }
+
         const isNewEntry = id.includes('empty');
         const updatedEntry = isNewEntry
             ? await createHabitEntry({ habitId, date, count: 1 })
@@ -62,7 +66,7 @@ export function HabitCell({ id: initialId, habitId, date, count: initialCount }:
     return (
         <div
             className={cn(
-                "relative cursor-pointer p-2 border border-white/50 rounded hover:bg-gray-100/80 text-xs",
+                "relative cursor-pointer p-2 border border-white/50 rounded sm:hover:bg-gray-100/80 text-xs",
                 count === 0 && dayjs(date).isSame(new Date(), 'day') && "bg-yellow-500",
                 count === 1 && "bg-green-500",
                 count === 2 && "bg-green-600",
