@@ -26,7 +26,7 @@ export function InfoButton() {
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="p-2 hover:bg-white/10 rounded-full transition-colors"
-                aria-label="Information about habit tracker"
+                aria-label="Information about habits"
             >
                 <Info size={20} className="text-white/60" />
             </button>

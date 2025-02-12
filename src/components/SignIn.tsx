@@ -22,8 +22,8 @@ export function SignIn() {
   return (
     <div className="flex flex-col items-center justify-center gap-8 mt-20">
       <div className="text-center space-y-2">
-        <h2 className="text-2xl font-semibold text-white/80">Welcome to Habit Tracker</h2>
-        <p className="text-white/60">Sign in to start tracking your habits</p>
+        <h2 className="text-2xl font-semibold text-white/80">welcome to habits</h2>
+        <p className="text-white/60">sign in to start tracking your habits</p>
       </div>
       
       <button

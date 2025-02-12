@@ -25,7 +25,7 @@ export default async function Home() {
       <div className="min-h-screen p-8 bg-black">
         <main className="w-full mx-auto">
           <div className="flex justify-center items-center gap-2 mb-8">
-            <h1 className="text-3xl font-bold text-white/80">habit tracker</h1>
+            <h1 className="text-3xl font-bold text-white/80">habits</h1>
           </div>
           <SignIn />
         </main>
@@ -40,7 +40,7 @@ export default async function Home() {
       <main className="w-full mx-auto">
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center gap-2">
-            <h1 className="text-3xl font-bold text-white/80">habit tracker</h1>
+            <h1 className="text-3xl font-bold text-white/80">habits</h1>
             <InfoButton />
           </div>
           <SignOut />
