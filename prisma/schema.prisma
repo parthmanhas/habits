@@ -7,12 +7,24 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  name      String?
+  image     String?
+  habits    Habit[]
+}
+
 model Habit {
-  id          String       @id @default(cuid())
-  title       String
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  entries     HabitEntry[]
+  id        String       @id @default(cuid())
+  title     String
+  userId    String
+  user      User         @relation(fields: [userId], references: [id])
+  entries   HabitEntry[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@index([userId])
 }
 
 model HabitEntry {

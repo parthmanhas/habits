@@ -19,7 +19,7 @@ export async function getHabits() {
 export default async function Home() {
 
   const session = await auth();
-  
+
   if (!session) {
     return (
       <div className="min-h-screen p-8 bg-black">
@@ -34,7 +34,7 @@ export default async function Home() {
   }
 
   const habits = await getHabits();
-  
+
   return (
     <div className="min-h-screen p-8 bg-black">
       <main className="w-full mx-auto">
@@ -45,7 +45,7 @@ export default async function Home() {
           </div>
           <SignOut />
         </div>
-        <AddHabit />
+        <AddHabit session={session} />
         {habits.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-4 mt-40 text-white/60">
             <p className="text-lg text-center">No habits tracked yet</p>

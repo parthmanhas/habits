@@ -4,14 +4,24 @@ import { useState } from 'react';
 import { PlusCircle } from 'lucide-react';
 import { createHabit } from '@/app/actions';
 import { cn } from '@/lib/utils';
+import { Session } from 'next-auth';
+import assert from 'assert';
 
-export function AddHabit() {
+export function AddHabit({ session }: { session: Session }) {
+
+    assert(session, 'Session is required');
+    assert(session.user, 'User is required');
+    assert(session.user.id, 'User ID is required');
+
     const [isOpen, setIsOpen] = useState(false);
     const [title, setTitle] = useState('');
 
     async function handleSubmit(e: React.FormEvent) {
-        e.preventDefault();
-        await createHabit(title);
+        if (!session.user?.id) {
+            console.error('User ID is required');
+            return;
+        };
+        await createHabit(title, session.user.id);
         setTitle('');
         setIsOpen(false);
     }
@@ -48,7 +58,7 @@ export function AddHabit() {
                         autoFocus
                     />
                     <div className="flex gap-2 sm:flex-shrink-0">
-                        <button 
+                        <button
                             type="submit"
                             className={cn(
                                 "flex-1 sm:flex-initial px-4 py-2",
@@ -59,7 +69,7 @@ export function AddHabit() {
                         >
                             add
                         </button>
-                        <button 
+                        <button
                             type="button"
                             onClick={() => setIsOpen(false)}
                             className={cn(

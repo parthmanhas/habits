@@ -58,13 +58,20 @@ export async function deleteHabitEntry(id: string) {
 }
 
 // create habit
-export async function createHabit(title: string) {
+export async function createHabit(title: string, userId: string) {
+    assert(title, 'Title is required');
+    assert(userId, 'User ID is required');
     // Update your database or storage here
     console.log('Creating habit:', title);
     try {
         const habit = await db.habit.create({
             data: {
-                title
+                title,
+                user: {
+                    connect: {
+                        id: userId
+                    }
+                }
             }
         });
         revalidatePath('/');
