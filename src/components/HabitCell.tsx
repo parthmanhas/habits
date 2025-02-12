@@ -82,7 +82,7 @@ export function HabitCell({ id: initialId, habitId, date, count: initialCount }:
                 {count || ''}
             </span>
             {count > 5 && (
-                <span className="absolute -top-1 -right-1 text-yellow-400 text-xs">
+                <span className="absolute -top-[6px] -right-[6px] text-yellow-400 text-xs">
                     <Sparkles size={12} fill="yellow" />
                 </span>
             )}

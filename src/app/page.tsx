@@ -21,9 +21,9 @@ export async function getHabits() {
 export default async function Home() {
   const habits = await getHabits();
   return (
-    <div className="grid grid-col-12 min-h-screen p-8 bg-black">
-      <main className="lg:col-span-10 mx-auto">
-        <h1 className="text-3xl font-bold mb-8">Habit Tracker</h1>
+    <div className="min-h-screen p-8 bg-black">
+      <main className="w-full mx-auto">
+        <h1 className="text-3xl font-bold mb-8 text-white/80 text-center">habit tracker</h1>
         <div className="flex flex-col gap-10">
           {habits.map(habit => 
           <HabitTracker
