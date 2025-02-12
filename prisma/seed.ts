@@ -3,10 +3,23 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 async function main() {
+  // Create a user first
+  const user = await prisma.user.create({
+    data: {
+      email: 'test@example.com',
+      name: 'Test User'
+    }
+  })
+
   // Create a meditation habit
   const meditation = await prisma.habit.create({
     data: {
       title: 'meditation',
+      user: {
+        connect: {
+          id: user.id
+        }
+      },
       entries: {
         create: [
           {

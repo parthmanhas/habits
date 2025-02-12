@@ -1,26 +1,15 @@
 import { AddHabit } from "@/components/AddHabit";
 import { HabitTracker } from "@/components/HabitTracker";
 import { InfoButton } from "@/components/InfoButton";
-import { db } from "@/lib/db";
 import { SignIn } from "@/components/SignIn";
 import { auth } from "@/lib/auth";
 import { SignOut } from "@/components/SignOut";
-
-//get all habits from db include entries
-export async function getHabits() {
-  const habits = await db.habit.findMany({
-    include: {
-      entries: true
-    }
-  });
-  return habits;
-}
+import { getHabits } from "@/lib/habits";
 
 export default async function Home() {
-
   const session = await auth();
 
-  if (!session) {
+  if (!session?.user) {
     return (
       <div className="min-h-screen p-8 bg-black">
         <main className="w-full mx-auto">
@@ -33,7 +22,10 @@ export default async function Home() {
     );
   }
 
-  const habits = await getHabits();
+  if (!session.user.id) {
+    throw new Error('User ID is required');
+  }
+  const habits = await getHabits(session.user.id);
 
   return (
     <div className="min-h-screen p-8 bg-black">
