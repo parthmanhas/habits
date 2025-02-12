@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { PlusCircle } from 'lucide-react';
 import { createHabit } from '@/app/actions';
-import { cn } from '@/app/page';
+import { cn } from '@/lib/utils';
 
 export function AddHabit() {
     const [isOpen, setIsOpen] = useState(false);

@@ -1,7 +1,7 @@
 "use client";
 
 import { createHabitEntry, deleteHabitEntry, updateHabit } from "@/app/actions";
-import { cn } from "@/app/page";
+import { cn } from "@/lib/utils";
 import { HabitEntry } from "@prisma/client";
 import assert from "assert";
 import dayjs from "dayjs";

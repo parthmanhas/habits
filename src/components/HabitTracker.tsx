@@ -2,8 +2,8 @@ import { HabitEntry } from "@prisma/client";
 import { HabitCell } from "./HabitCell";
 import dayjs from "dayjs";
 import assert from "assert";
-import { cn } from "@/app/page";
 import { DeleteHabit } from "./DeleteHabit";
+import { cn } from "@/lib/utils";
 
 interface HabitTrackerProps {
     title: string;

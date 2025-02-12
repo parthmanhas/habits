@@ -2,13 +2,9 @@ import { AddHabit } from "@/components/AddHabit";
 import { HabitTracker } from "@/components/HabitTracker";
 import { InfoButton } from "@/components/InfoButton";
 import { db } from "@/lib/db";
-
-import { type ClassValue, clsx } from 'clsx'
-import { twMerge } from 'tailwind-merge'
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
+import { SignIn } from "@/components/SignIn";
+import { auth } from "@/lib/auth";
+import { SignOut } from "@/components/SignOut";
 
 //get all habits from db include entries
 export async function getHabits() {
@@ -21,14 +17,33 @@ export async function getHabits() {
 }
 
 export default async function Home() {
+
+  const session = await auth();
+  
+  if (!session) {
+    return (
+      <div className="min-h-screen p-8 bg-black">
+        <main className="w-full mx-auto">
+          <div className="flex justify-center items-center gap-2 mb-8">
+            <h1 className="text-3xl font-bold text-white/80">habit tracker</h1>
+          </div>
+          <SignIn />
+        </main>
+      </div>
+    );
+  }
+
   const habits = await getHabits();
   
   return (
     <div className="min-h-screen p-8 bg-black">
       <main className="w-full mx-auto">
-        <div className="flex justify-center items-center gap-2 mb-8">
-          <h1 className="text-3xl font-bold text-white/80">habit tracker</h1>
-          <InfoButton />
+        <div className="flex justify-between items-center mb-8">
+          <div className="flex items-center gap-2">
+            <h1 className="text-3xl font-bold text-white/80">habit tracker</h1>
+            <InfoButton />
+          </div>
+          <SignOut />
         </div>
         <AddHabit />
         {habits.length === 0 ? (

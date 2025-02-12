@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@/app/page';
+import { cn } from '@/lib/utils';
 import { Info } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 
