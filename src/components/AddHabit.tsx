@@ -34,6 +34,7 @@ export function AddHabit({ session }: { session: Session }) {
             setIsOpen(false);
         } catch (error) {
             setError('Failed to create habit');
+            console.error('Failed to create habit:', error);
         }
     }
 

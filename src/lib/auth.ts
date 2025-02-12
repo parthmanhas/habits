@@ -5,7 +5,7 @@ import { db } from "./db";
 export const { handlers, auth, signIn, signOut } = NextAuth({
     providers: [Google],
     callbacks: {
-        async signIn({ user, account, profile }) {
+        async signIn({ user, account }) {
             if (account?.provider === "google" && user.email) {
                 const existingUser = await db.user.findUnique({
                     where: { email: user.email }

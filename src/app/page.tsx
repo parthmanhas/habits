@@ -49,7 +49,7 @@ export default async function Home() {
         {habits.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-4 mt-40 text-white/60">
             <p className="text-lg text-center">No habits tracked yet</p>
-            <p className="text-sm text-center">Click the "add new habit" button above to get started</p>
+            <p className="text-sm text-center">Click the &quot;add new habit&quot; button above to get started</p>
           </div>
         ) : (
           <div className="flex flex-col gap-10">
