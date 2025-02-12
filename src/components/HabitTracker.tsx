@@ -1,6 +1,5 @@
 import { cn } from "@/app/page";
 import dayjs from "dayjs";
-import { get } from "http";
 import { Sparkles } from "lucide-react";
 
 type HabitEntry = {
@@ -10,21 +9,10 @@ type HabitEntry = {
 
 interface HabitTrackerProps {
     title: string;
+    entries: HabitEntry[]
 }
 
-// Mock data for the current year
-const mockHabitData: HabitEntry[] = Array.from({ length: 50 }, () => {
-    const currentYear = new Date().getFullYear();
-    const startOfYear = new Date(currentYear, 0, 1);
-    const now = new Date();
-    const randomDate = new Date(startOfYear.getTime() + Math.random() * (now.getTime() - startOfYear.getTime()));
-    return {
-        date: randomDate.toISOString().split('T')[0],
-        count: Math.floor(Math.random() * 8)
-    };
-});
-
-export function HabitTracker({ title }: HabitTrackerProps) {
+export function HabitTracker({ title, entries }: HabitTrackerProps) {
 
     function getDatesGroupedByMonth(): Record<number, Date[]> {
         const currentYear = new Date().getFullYear();
@@ -44,8 +32,7 @@ export function HabitTracker({ title }: HabitTrackerProps) {
         return datesGroupedByMonth;
     }
 
-    // create random contribution data
-    const habitData: Record<string, number> = mockHabitData.reduce((acc, entry) => {
+    const habitData: Record<string, number> = entries.reduce((acc: Record<string, number>, entry) => {
         acc[entry.date] = entry.count;
         return acc;
     }, {});
@@ -61,8 +48,8 @@ export function HabitTracker({ title }: HabitTrackerProps) {
                             <div className="flex flex-wrap items-justify gap-1">
                                 {month.map((date, index) => (
                                     <div key={index} className={cn(
-                                        "relative rounded cursor-pointer text-xs p-2 border border-white/50 rounded hover:bg-gray-100/80 text-xs",
-                                        dayjs(date).isSame(new Date(), 'day') && "bg-yellow-500",
+                                        "relative cursor-pointer p-2 border border-white/50 rounded hover:bg-gray-100/80 text-xs",
+                                        habitData[date.toISOString().split('T')[0]] === 0 && dayjs(date).isSame(new Date(), 'day') && "bg-yellow-500",
                                         habitData[date.toISOString().split('T')[0]] === 1 && "bg-green-500",
                                         habitData[date.toISOString().split('T')[0]] === 2 && "bg-green-600",
                                         habitData[date.toISOString().split('T')[0]] === 3 && "bg-green-700",
