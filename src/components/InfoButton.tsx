@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from '@/app/page';
 import { Info } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 
@@ -31,10 +32,22 @@ export function InfoButton() {
             </button>
 
             {isOpen && (
-                <div className="absolute z-50 w-64 p-4 text-sm bg-zinc-900 rounded-lg shadow-lg -left-28 mt-2 border border-white/10">
+                <div className={cn(
+                    "absolute z-50 p-4 text-sm bg-zinc-900 rounded-lg shadow-lg border border-white/10",
+                    "w-[280px] sm:w-64", // Wider on mobile, normal on desktop
+                    "right-0 sm:-translate-x-0 sm:-left-28", // Center on mobile, fixed position on desktop
+                    "mt-2",
+                    "max-w-[calc(100vw-2rem)]" // Prevent overflow on very small screens
+                )}>
                     <ul className="space-y-2 text-white/60">
-                        <li>press and hold to delete habit entries</li>
-                        <li>press and hold the delete button to delete habit</li>
+                        <li className="flex gap-2 items-start">
+                            <span className="font-semibold">•</span>
+                            <span>Press and hold to delete habit entries</span>
+                        </li>
+                        <li className="flex gap-2 items-start">
+                            <span className="font-semibold">•</span>
+                            <span>Press and hold the delete button to delete habit</span>
+                        </li>
                     </ul>
                 </div>
             )}

@@ -22,6 +22,7 @@ export async function getHabits() {
 
 export default async function Home() {
   const habits = await getHabits();
+  
   return (
     <div className="min-h-screen p-8 bg-black">
       <main className="w-full mx-auto">
@@ -30,15 +31,23 @@ export default async function Home() {
           <InfoButton />
         </div>
         <AddHabit />
-        <div className="flex flex-col gap-10">
-          {habits.map(habit =>
-            <HabitTracker
-              key={habit.id}
-              title={habit.title}
-              habitId={habit.id}
-              entries={habit.entries}
-            />)}
-        </div>
+        {habits.length === 0 ? (
+          <div className="flex flex-col items-center justify-center gap-4 mt-40 text-white/60">
+            <p className="text-lg text-center">No habits tracked yet</p>
+            <p className="text-sm text-center">Click the "add new habit" button above to get started</p>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-10">
+            {habits.map(habit =>
+              <HabitTracker
+                key={habit.id}
+                title={habit.title}
+                habitId={habit.id}
+                entries={habit.entries}
+              />
+            )}
+          </div>
+        )}
       </main>
     </div>
   );
