@@ -1,3 +1,4 @@
+import { AddHabit } from "@/components/AddHabit";
 import { HabitTracker } from "@/components/HabitTracker";
 import { db } from "@/lib/db";
 
@@ -24,6 +25,7 @@ export default async function Home() {
     <div className="min-h-screen p-8 bg-black">
       <main className="w-full mx-auto">
         <h1 className="text-3xl font-bold mb-8 text-white/80 text-center">habit tracker</h1>
+        <AddHabit />
         <div className="flex flex-col gap-10">
           {habits.map(habit => 
           <HabitTracker

@@ -3,6 +3,7 @@
 import { db } from "@/lib/db";
 import { HabitEntry } from "@prisma/client";
 import assert from "assert";
+import { revalidatePath } from "next/cache";
 export async function updateHabit({ habitId, id, count }: Omit<HabitEntry, 'createdAt' | 'updatedAt' | 'date'>) {
     // Update your database or storage here
     console.log('Updating habit:', id, count);
@@ -52,6 +53,38 @@ export async function deleteHabitEntry(id: string) {
         return true;
     } catch (error) {
         console.error('Error deleting habit entry:', error);
+        return false;
+    }
+}
+
+// create habit
+export async function createHabit(title: string) {
+    // Update your database or storage here
+    console.log('Creating habit:', title);
+    try {
+        const habit = await db.habit.create({
+            data: {
+                title
+            }
+        });
+        revalidatePath('/');
+        return habit;
+    } catch (error) {
+        console.error('Error creating habit:', error);
+        return null;
+    }
+}
+
+//delete habit
+export async function deleteHabit(id: string) {
+    try {
+        await db.habit.delete({
+            where: { id }
+        });
+        revalidatePath('/');
+        return true;
+    } catch (error) {
+        console.error('Error deleting habit:', error);
         return false;
     }
 }
