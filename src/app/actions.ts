@@ -76,10 +76,13 @@ export async function createHabit(title: string) {
 }
 
 //delete habit
-export async function deleteHabit(id: string) {
+export async function deleteHabit(habitId: string) {
     try {
+        await db.habitEntry.deleteMany({
+            where: { habitId: habitId }
+        });
         await db.habit.delete({
-            where: { id }
+            where: { id: habitId }
         });
         revalidatePath('/');
         return true;

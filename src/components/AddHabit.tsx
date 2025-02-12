@@ -38,14 +38,14 @@ export function AddHabit() {
                         type="submit"
                         className="px-4 py-2 bg-white/10 rounded text-white/80 hover:bg-white/20"
                     >
-                        Add
+                        add
                     </button>
                     <button 
                         type="button"
                         onClick={() => setIsOpen(false)}
                         className="px-4 py-2 bg-white/10 rounded text-white/80 hover:bg-white/20"
                     >
-                        Cancel
+                        cancel
                     </button>
                 </form>
             )}

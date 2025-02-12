@@ -3,6 +3,7 @@ import { HabitCell } from "./HabitCell";
 import dayjs from "dayjs";
 import assert from "assert";
 import { cn } from "@/app/page";
+import { DeleteHabit } from "./DeleteHabit";
 
 interface HabitTrackerProps {
     title: string;
@@ -67,7 +68,10 @@ export function HabitTracker({ title = '', habitId, entries = [] }: HabitTracker
 
     return (
         <div className="space-y-4 w-full text-white/80 border-white/20 border-b pb-10">
-            <h2 className="text-xl font-semibold text-center">{title}</h2>
+            <div className="flex justify-center gap-2 items-center">
+                <h2 className="text-xl font-semibold text-center">{title}</h2>
+                <DeleteHabit habitId={habitId} />
+            </div>
             <div className="mx-4 sm:mx-0 overflow-x-auto snap-x snap-mandatory sm:snap-none scrollbar-hide py-5 ">
                 <div className="flex gap-4 sm:before:hidden sm:after:hidden before:content-[''] before:flex-[0_0_50%] after:content-[''] after:flex-[0_0_50%]">
                     {getMonthGroups().map((group, groupIndex) => (
