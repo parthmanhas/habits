@@ -1,6 +1,6 @@
 'use client';
 
-import { deleteHabit } from '@/app/actions';
+import { deleteHabit } from '@/actions/actions';
 import { Trash2 } from 'lucide-react';
 import { useState, useCallback, useRef } from 'react';
 

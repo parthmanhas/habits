@@ -1,6 +1,6 @@
 "use client";
 
-import { createHabitEntry, deleteHabitEntry, updateHabit } from "@/app/actions";
+import { createHabitEntry, deleteHabitEntry, updateHabit } from "@/actions/actions";
 import { cn } from "@/lib/utils";
 import { HabitEntry } from "@prisma/client";
 import assert from "assert";

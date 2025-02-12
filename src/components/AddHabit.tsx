@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { PlusCircle } from 'lucide-react';
-import { createHabit } from '@/app/actions';
+import { createHabit } from '@/actions/actions';
 import { cn } from '@/lib/utils';
 import { Session } from 'next-auth';
 import assert from 'assert';
@@ -15,19 +15,30 @@ export function AddHabit({ session }: { session: Session }) {
 
     const [isOpen, setIsOpen] = useState(false);
     const [title, setTitle] = useState('');
+    const [error, setError] = useState('');
 
     async function handleSubmit(e: React.FormEvent) {
+        e.preventDefault();
         if (!session.user?.id) {
-            console.error('User ID is required');
+            setError('User ID is required');
             return;
-        };
-        await createHabit(title, session.user.id);
-        setTitle('');
-        setIsOpen(false);
+        }
+        if (!title.trim()) {
+            setError('Please enter a habit name');
+            return;
+        }
+        try {
+            await createHabit(title, session.user.id);
+            setTitle('');
+            setError('');
+            setIsOpen(false);
+        } catch (error) {
+            setError('Failed to create habit');
+        }
     }
 
     return (
-        <div className="w-full max-w-md mx-auto flex justify-center pb-5">
+        <div className="w-full max-w-md mx-auto flex flex-col items-center pb-5">
             {!isOpen ? (
                 <button
                     onClick={() => setIsOpen(true)}
@@ -41,47 +52,53 @@ export function AddHabit({ session }: { session: Session }) {
                 </button>
             ) : (
                 <form onSubmit={handleSubmit} className={cn(
-                    "flex flex-col sm:flex-row gap-2",
+                    "flex flex-col gap-2 w-full",
                     "w-[90vw] sm:w-auto max-w-md px-4 sm:px-0"
                 )}>
-                    <input
-                        type="text"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        placeholder="enter habit name..."
-                        className={cn(
-                            "flex-1 px-3 py-2 bg-white/10 rounded",
-                            "text-white/80 text-base sm:text-lg",
-                            "placeholder:text-white/40",
-                            "focus:outline-none focus:ring-2 focus:ring-white/20"
-                        )}
-                        autoFocus
-                    />
-                    <div className="flex gap-2 sm:flex-shrink-0">
-                        <button
-                            type="submit"
+                    <div className="flex flex-col sm:flex-row gap-2">
+                        <input
+                            type="text"
+                            value={title}
+                            onChange={(e) => {
+                                setTitle(e.target.value);
+                                setError('');
+                            }}
+                            placeholder="enter habit name..."
                             className={cn(
-                                "flex-1 sm:flex-initial px-4 py-2",
-                                "bg-white/10 rounded text-white/80",
-                                "hover:bg-white/20 transition-colors",
-                                "text-base sm:text-lg"
+                                "flex-1 px-3 py-2 bg-white/10 rounded",
+                                "text-white/80 text-base sm:text-lg",
+                                "placeholder:text-white/40",
+                                "focus:outline-none focus:ring-2 focus:ring-white/20"
                             )}
-                        >
-                            add
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setIsOpen(false)}
-                            className={cn(
-                                "flex-1 sm:flex-initial px-4 py-2",
-                                "bg-white/10 rounded text-white/80",
-                                "hover:bg-white/20 transition-colors",
-                                "text-base sm:text-lg"
-                            )}
-                        >
-                            cancel
-                        </button>
+                            autoFocus
+                        />
+                        <div className="flex gap-2 sm:flex-shrink-0">
+                            <button
+                                type="submit"
+                                className={cn(
+                                    "flex-1 sm:flex-initial px-4 py-2",
+                                    "bg-white/10 rounded text-white/80",
+                                    "hover:bg-white/20 transition-colors",
+                                    "text-base sm:text-lg"
+                                )}
+                            >
+                                add
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setIsOpen(false)}
+                                className={cn(
+                                    "flex-1 sm:flex-initial px-4 py-2",
+                                    "bg-white/10 rounded text-white/80",
+                                    "hover:bg-white/20 transition-colors",
+                                    "text-base sm:text-lg"
+                                )}
+                            >
+                                cancel
+                            </button>
+                        </div>
                     </div>
+                    {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
                 </form>
             )}
         </div>
