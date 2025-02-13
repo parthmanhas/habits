@@ -6,7 +6,8 @@ import { HabitEntry } from "@prisma/client";
 import assert from "assert";
 import dayjs from "dayjs";
 import { Sparkles } from "lucide-react";
-import { useCallback, useRef, useState, useTransition } from "react";
+import { useCallback, useRef, useState, useTransition, useEffect } from "react";
+import { debounce } from "lodash";  // Add this import
 
 export function HabitCell({ id: initialId, habitId, date, count: initialCount }: HabitEntry) {
     assert(habitId !== 'placeholder' || habitId, 'Habit ID is required');
@@ -16,6 +17,31 @@ export function HabitCell({ id: initialId, habitId, date, count: initialCount }:
     const timerRef = useRef<NodeJS.Timeout>(null);
     const [isLongPress, setIsLongPress] = useState(false);
     const [isPending, startTransition] = useTransition();
+
+    // Create a debounced version of the server update with useRef to persist between renders
+    const debouncedUpdateRef = useRef(
+        debounce(async (newCount: number, isNewEntry: boolean, currentId: string) => {
+            try {
+                const updatedEntry = isNewEntry
+                    ? await createHabitEntry({ habitId, date, count: newCount })
+                    : await updateHabit({ habitId, id: currentId, count: newCount });
+
+                if (updatedEntry && isNewEntry) {
+                    setId(updatedEntry.id);
+                }
+            } catch (error) {
+                setCount(count);
+                console.error('Failed to update entry:', error);
+            }
+        }, 1000) // Increased debounce time to 1 seconds
+    );
+
+    // Cleanup debounce on unmount
+    useEffect(() => {
+        return () => {
+            debouncedUpdateRef.current.cancel();
+        };
+    }, []);
 
     const handleLongPress = useCallback(async () => {
         if (!id.includes('empty')) {
@@ -44,44 +70,27 @@ export function HabitCell({ id: initialId, habitId, date, count: initialCount }:
         }
     }, [id, date, count]);
 
-    const handleCellClick = () => {
+    const handleCellClick = useCallback(() => {
         if (isLongPress || isPending) {
             setIsLongPress(false);
             return;
         }
 
-        if(dayjs(date).isAfter(new Date(), 'day')) {
+        if (dayjs(date).isAfter(new Date(), 'day')) {
             return;
         }
 
         const isNewEntry = id.includes('empty');
         const newCount = (count || 0) + 1;
-        
-        // Optimistically update UI
-        setCount(newCount);
-        
-        // Update server in transition
-        startTransition(async () => {
-            try {
-                const updatedEntry = isNewEntry
-                    ? await createHabitEntry({ habitId, date, count: 1 })
-                    : await updateHabit({ id, habitId, count: newCount });
 
-                if (updatedEntry) {
-                    if (isNewEntry) {
-                        setId(updatedEntry.id);
-                    }
-                } else {
-                    // Revert on failure
-                    setCount(count);
-                }
-            } catch (error) {
-                // Revert on error
-                setCount(count);
-                console.error('Failed to update entry:', error);
-            }
+        // Optimistically update UI immediately
+        setCount(newCount);
+
+        // Queue the debounced update
+        startTransition(() => {
+            debouncedUpdateRef.current(newCount, isNewEntry, id);
         });
-    };
+    }, [isLongPress, isPending, date, id, count]);
 
     const startPressTimer = useCallback(() => {
         setIsLongPress(false);
