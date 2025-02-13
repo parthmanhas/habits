@@ -8,29 +8,23 @@ import { getHabits } from "@/lib/habits";
 import { cn } from "@/lib/utils";
 
 export default async function Home() {
-  // const session = await auth();
+  const session = await auth();
 
-  // if (!session?.user) {
-  //   return (
-  //     <div className="min-h-screen p-8 bg-black">
-  //       <main className="w-full mx-auto">
-  //         <div className="flex justify-center items-center gap-2 mb-8">
-  //           <h1 className="text-3xl font-bold text-white/80">habits</h1>
-  //         </div>
-  //         <SignIn />
-  //       </main>
-  //     </div>
-  //   );
-  // }
+  if (!session?.user) {
+    return (
+      <div className="min-h-screen p-8 bg-black">
+        <main className="w-full mx-auto">
+          <div className="flex justify-center items-center gap-2 mb-8">
+            <h1 className="text-3xl font-bold text-white/80">habits</h1>
+          </div>
+          <SignIn />
+        </main>
+      </div>
+    );
+  }
 
-  // if (!session.user.id) {
-  //   throw new Error('User ID is required');
-  // }
-
-  const session = {
-    user: {
-      id: "cm71x4g360000a8u0i4obrxbd"
-    }
+  if (!session.user.id) {
+    throw new Error('User ID is required');
   }
   const habits = await getHabits(session.user.id);
 
@@ -44,7 +38,7 @@ export default async function Home() {
           </div>
           <SignOut />
         </div>
-        <AddHabit session={session} />
+        <AddHabit />
         {habits.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-4 mt-40 text-white/60">
             <p className="text-lg text-center">No habits tracked yet</p>
