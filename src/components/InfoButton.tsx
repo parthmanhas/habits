@@ -35,7 +35,7 @@ export function InfoButton() {
                 <div className={cn(
                     "absolute z-50 p-4 text-sm bg-zinc-900 rounded-lg shadow-lg border border-white/10",
                     "w-[280px] sm:w-64", // Wider on mobile, normal on desktop
-                    "right-0 sm:-translate-x-0 sm:-left-28", // Center on mobile, fixed position on desktop
+                    "-left-28 sm:-translate-x-0", // Center on mobile, fixed position on desktop
                     "mt-2",
                     "max-w-[calc(100vw-2rem)]" // Prevent overflow on very small screens
                 )}>

@@ -1,11 +1,17 @@
 'use server'
 
+import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { HabitEntry } from "@prisma/client";
 import assert from "assert";
 import { revalidatePath } from "next/cache";
 export async function updateHabit({ habitId, id, count }: Omit<HabitEntry, 'createdAt' | 'updatedAt' | 'date'>) {
     // Update your database or storage here
+    const session = await auth();
+
+    if (!session?.user?.id) {
+        throw new Error('Unauthorized');
+    }
     console.log('Updating habit:', id, count);
     try {
         const entry = await db.habitEntry.update({
@@ -29,6 +35,11 @@ export async function updateHabit({ habitId, id, count }: Omit<HabitEntry, 'crea
 export async function createHabitEntry({ habitId, date, count }: Omit<HabitEntry, 'createdAt' | 'updatedAt' | 'id'>) {
     // Update your database or storage here
     assert(habitId !== 'placeholder', 'Habit ID is required');
+    const session = await auth();
+
+    if (!session?.user?.id) {
+        throw new Error('Unauthorized');
+    }
     console.log('Creating habit entry:', date, count);
     try {
         const entry = await db.habitEntry.create({
@@ -46,6 +57,11 @@ export async function createHabitEntry({ habitId, date, count }: Omit<HabitEntry
 }
 
 export async function deleteHabitEntry(id: string) {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+        throw new Error('Unauthorized');
+    }
     try {
         await db.habitEntry.delete({
             where: { id }
@@ -58,18 +74,21 @@ export async function deleteHabitEntry(id: string) {
 }
 
 // create habit
-export async function createHabit(title: string, userId: string) {
+export async function createHabit(title: string) {
     assert(title, 'Title is required');
-    assert(userId, 'User ID is required');
-    // Update your database or storage here
-    console.log('Creating habit:', title);
+    const session = await auth();
+
+    if (!session?.user?.id) {
+        throw new Error('Unauthorized');
+    }
+    console.log('Creating habit:', title, session.user.id);
     try {
         const habit = await db.habit.create({
             data: {
                 title,
                 user: {
                     connect: {
-                        id: userId
+                        id: session.user.id
                     }
                 }
             }
@@ -84,12 +103,17 @@ export async function createHabit(title: string, userId: string) {
 
 //delete habit
 export async function deleteHabit(habitId: string) {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+        throw new Error('Unauthorized');
+    }
     try {
         await db.habitEntry.deleteMany({
             where: { habitId: habitId }
         });
         await db.habit.delete({
-            where: { id: habitId }
+            where: { id: habitId, userId: session.user.id }
         });
         revalidatePath('/');
         return true;

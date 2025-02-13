@@ -1,40 +1,35 @@
 'use client';
 
 import { useState } from 'react';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, Loader2 } from 'lucide-react';
 import { createHabit } from '@/actions/actions';
 import { cn } from '@/lib/utils';
 import { Session } from 'next-auth';
-import assert from 'assert';
 
-export function AddHabit({ session }: { session: Session }) {
-
-    assert(session, 'Session is required');
-    assert(session.user, 'User is required');
-    assert(session.user.id, 'User ID is required');
+export function AddHabit() {
 
     const [isOpen, setIsOpen] = useState(false);
     const [title, setTitle] = useState('');
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        if (!session.user?.id) {
-            setError('User ID is required');
-            return;
-        }
         if (!title.trim()) {
             setError('Please enter a habit name');
             return;
         }
         try {
-            await createHabit(title, session.user.id);
+            setIsLoading(true);
+            await createHabit(title);
             setTitle('');
             setError('');
             setIsOpen(false);
         } catch (error) {
             setError('Failed to create habit');
             console.error('Failed to create habit:', error);
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -69,30 +64,45 @@ export function AddHabit({ session }: { session: Session }) {
                                 "flex-1 px-3 py-2 bg-white/10 rounded",
                                 "text-white/80 text-base sm:text-lg",
                                 "placeholder:text-white/40",
-                                "focus:outline-none focus:ring-2 focus:ring-white/20"
+                                "focus:outline-none focus:ring-2",
+                                error ? "ring-2 ring-red-500/50" : "focus:ring-white/20",
+                                isLoading && "opacity-50 cursor-not-allowed"
                             )}
+                            disabled={isLoading}
                             autoFocus
                         />
                         <div className="flex gap-2 sm:flex-shrink-0">
                             <button
                                 type="submit"
+                                disabled={isLoading}
                                 className={cn(
+                                    "flex items-center justify-center gap-2",
                                     "flex-1 sm:flex-initial px-4 py-2",
                                     "bg-white/10 rounded text-white/80",
                                     "hover:bg-white/20 transition-colors",
-                                    "text-base sm:text-lg"
+                                    "text-base sm:text-lg",
+                                    "disabled:opacity-50 disabled:cursor-not-allowed"
                                 )}
                             >
-                                add
+                                {isLoading ? (
+                                    <>
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                        <span>adding...</span>
+                                    </>
+                                ) : (
+                                    <span>add</span>
+                                )}
                             </button>
                             <button
                                 type="button"
                                 onClick={() => setIsOpen(false)}
+                                disabled={isLoading}
                                 className={cn(
                                     "flex-1 sm:flex-initial px-4 py-2",
                                     "bg-white/10 rounded text-white/80",
                                     "hover:bg-white/20 transition-colors",
-                                    "text-base sm:text-lg"
+                                    "text-base sm:text-lg",
+                                    "disabled:opacity-50 disabled:cursor-not-allowed"
                                 )}
                             >
                                 cancel

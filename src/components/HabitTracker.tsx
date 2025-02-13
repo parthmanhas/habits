@@ -9,9 +9,10 @@ interface HabitTrackerProps {
     title: string;
     habitId: string;
     entries: HabitEntry[];
+    className?: string;
 }
 
-export function HabitTracker({ title = '', habitId, entries = [] }: HabitTrackerProps) {
+export function HabitTracker({ title = '', habitId, entries = [], className }: HabitTrackerProps) {
     assert(title, 'Title is required');
     assert(habitId, 'Habit ID is required');
 
@@ -67,7 +68,10 @@ export function HabitTracker({ title = '', habitId, entries = [] }: HabitTracker
     }
 
     return (
-        <div className="space-y-4 w-full text-white/80 border-white/20 border-b pb-10">
+        <div className={cn(
+            className,
+            "space-y-4 w-full text-white/80 border-white/20 border-b pb-10",
+        )}>
             <div className="flex justify-center gap-2 items-center">
                 <h2 className="text-xl font-semibold text-center">{title}</h2>
                 <DeleteHabit habitId={habitId} />
@@ -85,7 +89,7 @@ export function HabitTracker({ title = '', habitId, entries = [] }: HabitTracker
                                     <h3 className="text- text-center font-semibold mb-2">
                                         {month[0].date.toLocaleDateString('en', { month: 'short' }).toLocaleLowerCase()}
                                     </h3>
-                                    <div className="flex flex-wrap gap-1">
+                                    <div className="flex flex-wrap gap-2">
                                         {month.map((data, index) => (
                                             <HabitCell
                                                 key={index}

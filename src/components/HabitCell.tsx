@@ -6,25 +6,82 @@ import { HabitEntry } from "@prisma/client";
 import assert from "assert";
 import dayjs from "dayjs";
 import { Sparkles } from "lucide-react";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, useTransition } from "react";
 
 export function HabitCell({ id: initialId, habitId, date, count: initialCount }: HabitEntry) {
     assert(habitId !== 'placeholder' || habitId, 'Habit ID is required');
 
-    const [count, setCountState] = useState(initialCount);
+    const [count, setCount] = useState(initialCount);
     const [id, setId] = useState(initialId);
     const timerRef = useRef<NodeJS.Timeout>(null);
     const [isLongPress, setIsLongPress] = useState(false);
+    const [isPending, startTransition] = useTransition();
 
     const handleLongPress = useCallback(async () => {
         if (!id.includes('empty')) {
-            const deleted = await deleteHabitEntry(id);
-            if (deleted) {
-                setCountState(0);
-                setId(`${dayjs(date).format('YYYY-MM-DD')}-empty`);
-            }
+            // Optimistically update UI
+            const previousCount = count;
+            const previousId = id;
+            setCount(0);
+            setId(`${dayjs(date).format('YYYY-MM-DD')}-empty`);
+
+            // Update server in transition
+            startTransition(async () => {
+                try {
+                    const deleted = await deleteHabitEntry(id);
+                    if (!deleted) {
+                        // Revert on failure
+                        setCount(previousCount);
+                        setId(previousId);
+                    }
+                } catch (error) {
+                    // Revert on error
+                    setCount(previousCount);
+                    setId(previousId);
+                    console.error('Failed to delete entry:', error);
+                }
+            });
         }
-    }, [id, date]);
+    }, [id, date, count]);
+
+    const handleCellClick = () => {
+        if (isLongPress || isPending) {
+            setIsLongPress(false);
+            return;
+        }
+
+        if(dayjs(date).isAfter(new Date(), 'day')) {
+            return;
+        }
+
+        const isNewEntry = id.includes('empty');
+        const newCount = (count || 0) + 1;
+        
+        // Optimistically update UI
+        setCount(newCount);
+        
+        // Update server in transition
+        startTransition(async () => {
+            try {
+                const updatedEntry = isNewEntry
+                    ? await createHabitEntry({ habitId, date, count: 1 })
+                    : await updateHabit({ id, habitId, count: newCount });
+
+                if (updatedEntry) {
+                    if (isNewEntry) {
+                        setId(updatedEntry.id);
+                    }
+                } else {
+                    // Revert on failure
+                    setCount(count);
+                }
+            } catch (error) {
+                // Revert on error
+                setCount(count);
+                console.error('Failed to update entry:', error);
+            }
+        });
+    };
 
     const startPressTimer = useCallback(() => {
         setIsLongPress(false);
@@ -40,33 +97,11 @@ export function HabitCell({ id: initialId, habitId, date, count: initialCount }:
         }
     }, []);
 
-    const handleCellClick = async () => {
-        if (isLongPress) {
-            setIsLongPress(false);
-            return;
-        }
-
-        if(dayjs(date).isAfter(new Date(), 'day')) {
-            return;
-        }
-
-        const isNewEntry = id.includes('empty');
-        const updatedEntry = isNewEntry
-            ? await createHabitEntry({ habitId, date, count: 1 })
-            : await updateHabit({ id, habitId, count: (count || 0) + 1 });
-
-        if (updatedEntry) {
-            setCountState(updatedEntry.count);
-            if (isNewEntry) {
-                setId(updatedEntry.id);
-            }
-        }
-    };
-
     return (
         <div
             className={cn(
-                "relative cursor-pointer p-2 border border-white/50 rounded sm:hover:bg-gray-100/80 text-xs",
+                "h-6 w-6 relative cursor-pointer border border-white/50 rounded sm:hover:bg-gray-100/80 text-xs",
+                "transition-all duration-200",
                 count === 0 && dayjs(date).isSame(new Date(), 'day') && "bg-yellow-500",
                 count === 1 && "bg-green-500",
                 count === 2 && "bg-green-600",
@@ -76,11 +111,11 @@ export function HabitCell({ id: initialId, habitId, date, count: initialCount }:
                 count > 5 && "bg-red-500",
             )}
             onClick={handleCellClick}
-            onMouseDown={startPressTimer}
-            onMouseUp={cancelPressTimer}
-            onMouseLeave={cancelPressTimer}
-            onTouchStart={startPressTimer}
-            onTouchEnd={cancelPressTimer}
+            onMouseDown={!isPending ? startPressTimer : undefined}
+            onMouseUp={!isPending ? cancelPressTimer : undefined}
+            onMouseLeave={!isPending ? cancelPressTimer : undefined}
+            onTouchStart={!isPending ? startPressTimer : undefined}
+            onTouchEnd={!isPending ? cancelPressTimer : undefined}
         >
             <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                 {count || ''}
