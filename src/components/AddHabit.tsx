@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { PlusCircle, Loader2 } from 'lucide-react';
 import { createHabit } from '@/actions/actions';
 import { cn } from '@/lib/utils';
-import { Session } from 'next-auth';
 
 export function AddHabit() {
 
