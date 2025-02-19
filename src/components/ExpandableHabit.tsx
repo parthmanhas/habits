@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { HabitTracker } from './HabitTracker';
 import { cn } from '@/lib/utils';
 import { CheckCircle2, ChevronDown, ChevronUp, Circle } from 'lucide-react';
@@ -37,10 +37,22 @@ export function ExpandableHabit({
 }: ExpandableHabitProps) {
     const [isLocallyCompleted, setIsLocallyCompleted] = useState(habit.completedToday);
 
+    // Sync with prop changes
+    useEffect(() => {
+        setIsLocallyCompleted(habit.completedToday);
+    }, [habit.completedToday]);
+
     const handleHabitCellUpdate = (newCount: number) => {
-        // Update local completion status optimistically
-        setIsLocallyCompleted(newCount > 0);
+        requestAnimationFrame(() => {
+            setIsLocallyCompleted(newCount > 0);
+        });
     };
+
+    const completionIcon = isLocallyCompleted ? (
+        <CheckCircle2 className="w-5 h-5 text-green-500" />
+    ) : (
+        <Circle className="w-5 h-5 text-white/20" />
+    );
 
     return (
         <div className={cn(
@@ -53,11 +65,7 @@ export function ExpandableHabit({
                 onClick={onToggle}
             >
                 <div className='flex items-center gap-2'>
-                    {isLocallyCompleted ? (
-                        <CheckCircle2 className="w-5 h-5 text-green-500" />
-                    ) : (
-                        <Circle className="w-5 h-5 text-white/20" />
-                    )}
+                    {completionIcon}
                     <h2 className="text-xl font-semibold text-white/80">{habit.title}</h2>
                 </div>
                 {isExpanded ? <ChevronUp className="w-6 h-6 text-white/60" /> : <ChevronDown className="w-6 h-6 text-white/60" />}
@@ -73,7 +81,7 @@ export function ExpandableHabit({
                     className={cn(
                         "pt-2",
                         index === totalHabits - 1 && "border-none"
-                    )}
+                    )} 
                     onHabitCellUpdate={handleHabitCellUpdate}
                 />
             </div>
