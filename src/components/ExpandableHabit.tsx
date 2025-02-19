@@ -35,12 +35,6 @@ export function ExpandableHabit({
     onToggle
 }: ExpandableHabitProps) {
 
-    const completionIcon = habit.completedToday ? (
-        <CheckCircle2 className="w-5 h-5 text-green-500" />
-    ) : (
-        <Circle className="w-5 h-5 text-white/20" />
-    );
-
     return (
         <div className={cn(
             "transition-all duration-300 ease-in-out",
@@ -52,7 +46,6 @@ export function ExpandableHabit({
                 onClick={onToggle}
             >
                 <div className='flex items-center gap-2'>
-                    {completionIcon}
                     <h2 className="text-xl font-semibold text-white/80">{habit.title}</h2>
                 </div>
                 {isExpanded ? <ChevronUp className="w-6 h-6 text-white/60" /> : <ChevronDown className="w-6 h-6 text-white/60" />}
