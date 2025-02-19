@@ -6,7 +6,6 @@ import { HabitControls } from './HabitControls';
 import dayjs from 'dayjs';
 
 type Habit = {
-    completedToday: boolean;
     entries: {
         id: string;
         createdAt: Date;
@@ -33,23 +32,21 @@ export function HabitList({ habits }: HabitListProps) {
         completedToday: habit.entries.some(entry => dayjs(entry.date).isSame(new Date(), 'day'))
     }))
 
-    console.log(habitsWithCompletedToday)
-
     const [expandedHabits, setExpandedHabits] = useState<Set<string>>(new Set());
 
     // Sort habits with incomplete first using useMemo
     const sortedHabits = useMemo(() => {
-        return [...habits].sort((a, b) => {
+        return [...habitsWithCompletedToday].sort((a, b) => {
             if (a.completedToday === b.completedToday) {
                 return 0;
             }
             return a.completedToday ? 1 : -1;
         });
-    }, [habits]);
+    }, [habitsWithCompletedToday]);
 
 
     const handleExpandAll = () => {
-        setExpandedHabits(new Set(habits.map(habit => habit.id)));
+        setExpandedHabits(new Set(sortedHabits.map(habit => habit.id)));
     };
 
     const handleCollapseAll = () => {
