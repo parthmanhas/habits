@@ -10,9 +10,10 @@ interface HabitTrackerProps {
     habitId: string;
     entries: HabitEntry[];
     className?: string;
+    onHabitCellUpdate?: (newCount: number) => void;
 }
 
-export function HabitTracker({ title = '', habitId, entries = [], className }: HabitTrackerProps) {
+export function HabitTracker({ title = '', habitId, entries = [], className, onHabitCellUpdate }: HabitTrackerProps) {
     assert(title, 'Title is required');
     assert(habitId, 'Habit ID is required');
 
@@ -92,6 +93,7 @@ export function HabitTracker({ title = '', habitId, entries = [], className }: H
                                         {month.map((data, index) => (
                                             <HabitCell
                                                 key={index}
+                                                onHabitCellUpdate={onHabitCellUpdate}
                                                 {...data}
                                             />
                                         ))}
