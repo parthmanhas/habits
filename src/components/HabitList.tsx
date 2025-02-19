@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { ExpandableHabit } from './ExpandableHabit';
 import { HabitControls } from './HabitControls';
+import dayjs from 'dayjs';
 
 type Habit = {
     completedToday: boolean;
@@ -27,7 +28,12 @@ interface HabitListProps {
 
 export function HabitList({ habits }: HabitListProps) {
 
-    console.log(habits)
+    const habitsWithCompletedToday = habits.map(habit => ({
+        ...habit,
+        completedToday: habit.entries.some(entry => dayjs(entry.date).isSame(new Date(), 'day'))
+    }))
+
+    console.log(habitsWithCompletedToday)
 
     const [expandedHabits, setExpandedHabits] = useState<Set<string>>(new Set());
 
