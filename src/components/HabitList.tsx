@@ -56,7 +56,7 @@ export function HabitList({ habits }: HabitListProps) {
                 onExpandAll={handleExpandAll}
                 onCollapseAll={handleCollapseAll}
             />
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col">
                 {habits.map((habit, index) => (
                     <div key={habit.id} className="flex items-center gap-2">
                         <ExpandableHabit

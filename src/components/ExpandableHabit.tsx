@@ -37,7 +37,7 @@ export function ExpandableHabit({
     return (
         <div className={cn(
             "transition-all duration-300 ease-in-out",
-            isExpanded ? "h-auto" : "h-24",
+            isExpanded ? "h-auto" : "h-20",
             "relative overflow-x-auto"
         )}>
             <div
