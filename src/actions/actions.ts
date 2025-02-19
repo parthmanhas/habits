@@ -24,6 +24,7 @@ export async function updateHabit({ habitId, id, count }: Omit<HabitEntry, 'crea
 
             }
         });
+        revalidatePath('/');
         return entry;
     } catch (error) {
         console.error('Error updating habit:', error);
@@ -49,6 +50,7 @@ export async function createHabitEntry({ habitId, date, count }: Omit<HabitEntry
                 count,
             }
         });
+        revalidatePath('/');
         return entry;
     } catch (error) {
         console.error('Error creating habit entry:', error);
@@ -66,6 +68,7 @@ export async function deleteHabitEntry(id: string) {
         await db.habitEntry.delete({
             where: { id }
         });
+        revalidatePath('/');
         return true;
     } catch (error) {
         console.error('Error deleting habit entry:', error);
