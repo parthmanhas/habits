@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { ExpandableHabit } from './ExpandableHabit';
 import { HabitControls } from './HabitControls';
 
@@ -27,9 +27,23 @@ interface HabitListProps {
 
 export function HabitList({ habits }: HabitListProps) {
 
-    const [expandedHabits, setExpandedHabits] = useState<Set<string>>(
-        new Set([habits[0]?.id])
-    );
+    const [expandedHabits, setExpandedHabits] = useState<Set<string>>(new Set());
+
+    // Sort habits with incomplete first using useMemo
+    const sortedHabits = useMemo(() => {
+        return [...habits].sort((a, b) => {
+            if (a.completedToday === b.completedToday) {
+                return 0;
+            }
+            return a.completedToday ? 1 : -1;
+        });
+    }, [habits]);
+
+    useEffect(() => {
+        if (sortedHabits.length > 0) {
+            setExpandedHabits(new Set([sortedHabits[0].id]));
+        }
+    }, []); // Only run once on mount
 
     const handleExpandAll = () => {
         setExpandedHabits(new Set(habits.map(habit => habit.id)));
@@ -58,7 +72,7 @@ export function HabitList({ habits }: HabitListProps) {
                 onCollapseAll={handleCollapseAll}
             />
             <div className="flex flex-col">
-                {habits.map((habit, index) => (
+                {sortedHabits.map((habit, index) => (
                     <div key={habit.id} className="flex items-center gap-2">
                         <ExpandableHabit
                             habit={habit}
