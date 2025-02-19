@@ -27,6 +27,8 @@ interface HabitListProps {
 
 export function HabitList({ habits }: HabitListProps) {
 
+    console.log(habits)
+
     const [expandedHabits, setExpandedHabits] = useState<Set<string>>(new Set());
 
     // Sort habits with incomplete first using useMemo
