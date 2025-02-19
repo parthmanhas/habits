@@ -2,7 +2,6 @@ import dayjs from "dayjs";
 import { db } from "./db";
 
 export async function getHabits(userId: string) {
-  const today = dayjs().format('YYYY-MM-DD');
   const habits = await db.habit.findMany({
     where: {
       userId
@@ -14,7 +13,7 @@ export async function getHabits(userId: string) {
   return habits.map(habit => ({
     ...habit,
     completedToday: habit.entries.some(entry =>
-      dayjs(entry.date).format('YYYY-MM-DD') === today && entry.count > 0
+      dayjs(entry.date).isSame(new Date) && entry.count > 0
     ),
   }));
 }
