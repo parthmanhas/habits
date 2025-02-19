@@ -37,11 +37,6 @@ export function ExpandableHabit({
 }: ExpandableHabitProps) {
     const [isLocallyCompleted, setIsLocallyCompleted] = useState(habit.completedToday);
 
-    // Sync local state with prop when it changes
-    useEffect(() => {
-        setIsLocallyCompleted(habit.completedToday);
-    }, [habit.completedToday]);
-
     const handleHabitCellUpdate = (newCount: number) => {
         // Update local completion status optimistically
         setIsLocallyCompleted(newCount > 0);
