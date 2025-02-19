@@ -15,5 +15,6 @@ export async function getHabits(userId: string) {
     ...habit,
     completedToday: habit.entries.some(entry => dayjs(entry.date).isSame(new Date(), 'day'))
   }))
+  console.log(habitsWithCompletedToday)
   return habitsWithCompletedToday;
 }
