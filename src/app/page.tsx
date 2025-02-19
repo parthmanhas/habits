@@ -6,6 +6,8 @@ import { auth } from "@/lib/auth";
 import { SignOut } from "@/components/SignOut";
 import { getHabits } from "@/lib/habits";
 import { cn } from "@/lib/utils";
+import { ExpandableHabit } from "@/components/ExpandableHabit";
+import { HabitList } from "@/components/HabitList";
 
 export default async function Home() {
   const session = await auth();
@@ -45,21 +47,7 @@ export default async function Home() {
             <p className="text-sm text-center">Click the &quot;add new habit&quot; button above to get started</p>
           </div>
         ) : (
-          <div className="flex flex-col gap-10 sm:gap-0">
-            {habits.map((habit, index) =>
-              <HabitTracker
-                key={habit.id}
-                title={habit.title}
-                habitId={habit.id}
-                entries={habit.entries}
-                className={cn(
-                  index === 0 && "sm:pt-[10vh]",
-                  index > 0 && "m-auto sm:pt-[25vh] h-[90vh]",
-                  index === habits.length - 1 && "border-none"
-                )}
-              />
-            )}
-          </div>
+          <HabitList habits={habits} />
         )}
       </main>
     </div>

@@ -72,8 +72,7 @@ export function HabitTracker({ title = '', habitId, entries = [], className }: H
             className,
             "space-y-4 w-full text-white/80 border-white/20 border-b pb-10",
         )}>
-            <div className="flex justify-center gap-2 items-center">
-                <h2 className="text-xl font-semibold text-center">{title}</h2>
+            <div className="flex justify-end gap-2 items-center pr-3">
                 <DeleteHabit habitId={habitId} />
             </div>
             <div className="mx-4 sm:mx-0 overflow-x-auto snap-x snap-mandatory sm:snap-none scrollbar py-5 ">
