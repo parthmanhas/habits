@@ -4,7 +4,6 @@ import { useState, useMemo } from 'react';
 import { ExpandableHabit } from './ExpandableHabit';
 import { HabitControls } from './HabitControls';
 import dayjs from 'dayjs';
-import { ArrowUp } from 'lucide-react';
 
 type Habit = {
     entries: {
@@ -28,7 +27,6 @@ interface HabitListProps {
 
 export function HabitList({ habits }: HabitListProps) {
     const [expandedHabits, setExpandedHabits] = useState<Set<string>>(new Set());
-    const [sortAscending, setSortAscending] = useState(false);
 
     const habitsWithCompletedToday = habits.map(habit => ({
         ...habit,
@@ -43,11 +41,9 @@ export function HabitList({ habits }: HabitListProps) {
             if (a.completedToday === b.completedToday) {
                 return 0;
             }
-            return sortAscending 
-                ? (a.completedToday ? -1 : 1)
-                : (a.completedToday ? 1 : -1);
+            return a.completedToday ? 1 : -1;
         });
-    }, [habitsWithCompletedToday, sortAscending]);
+    }, [habitsWithCompletedToday]);
 
     const handleExpandAll = () => {
         setExpandedHabits(new Set(sortedHabits.map(habit => habit.id)));
@@ -71,30 +67,11 @@ export function HabitList({ habits }: HabitListProps) {
 
     return (
         <div className="space-y-4">
-            <div className="flex justify-between items-center">
+            <div className="flex justify-center sm:justify-end items-center">
                 <HabitControls
                     onExpandAll={handleExpandAll}
                     onCollapseAll={handleCollapseAll}
                 />
-                <button
-                    onClick={() => setSortAscending(!sortAscending)}
-                    className="flex items-center gap-2 px-3 py-1.5 text-sm rounded
-                             border border-white/20 text-white/80
-                             transition-colors duration-200
-                             hover:bg-white/5 active:bg-white/10"
-                >
-                    {sortAscending ? (
-                        <>
-                            Completed First
-                            <ArrowUp className="w-4 h-4" />
-                        </>
-                    ) : (
-                        <>
-                            Incomplete First
-                            <ArrowUp className="w-4 h-4" />
-                        </>
-                    )}
-                </button>
             </div>
             <div className="flex flex-col">
                 {sortedHabits.map((habit, index) => (
