@@ -2,57 +2,72 @@
 
 import { HabitTracker } from './HabitTracker';
 import { cn } from '@/lib/utils';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { CheckCircle2, ChevronDown, ChevronUp, Circle } from 'lucide-react';
 
 interface ExpandableHabitProps {
-  habit: {
-    id: string;
-    title: string;
-    entries: any[];
-  };
-  index: number;
-  totalHabits: number;
-  isExpanded: boolean;
-  onToggle: () => void;
+    habit: {
+        completedToday: boolean;
+        entries: {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            date: Date;
+            count: number;
+            habitId: string;
+        }[];
+        id: string;
+        title: string;
+        userId: string;
+        createdAt: Date;
+        updatedAt: Date;
+    };
+    index: number;
+    totalHabits: number;
+    isExpanded: boolean;
+    onToggle: () => void;
 }
 
-export function ExpandableHabit({ 
-  habit, 
-  index, 
-  totalHabits, 
-  isExpanded, 
-  onToggle 
+export function ExpandableHabit({
+    habit,
+    index,
+    totalHabits,
+    isExpanded,
+    onToggle
 }: ExpandableHabitProps) {
-  return (
-    <div className={cn(
-      "transition-all duration-300 ease-in-out",
-      isExpanded ? "h-auto" : "h-24",
-      "relative"
-    )}>
-      <div 
-        className="flex items-center justify-between cursor-pointer p-4 hover:bg-white/5 rounded-t"
-        onClick={onToggle}
-      >
-        <h2 className="text-xl font-semibold text-white/80">{habit.title}</h2>
-        {isExpanded ? 
-          <ChevronUp className="w-6 h-6 text-white/60" /> : 
-          <ChevronDown className="w-6 h-6 text-white/60" />
-        }
-      </div>
-      <div className={cn(
-        "transition-all duration-300 ease-in-out overflow-hidden",
-        isExpanded ? "opacity-100" : "opacity-0 h-0"
-      )}>
-        <HabitTracker
-          title={habit.title}
-          habitId={habit.id}
-          entries={habit.entries}
-          className={cn(
-            "pt-2",
-            index === totalHabits - 1 && "border-none"
-          )}
-        />
-      </div>
-    </div>
-  );
+    return (
+        <div className={cn(
+            "transition-all duration-300 ease-in-out",
+            isExpanded ? "h-auto" : "h-24",
+            "relative overflow-x-auto"
+        )}>
+            <div
+                className="flex items-center justify-between cursor-pointer p-4 hover:bg-white/5 rounded-t"
+                onClick={onToggle}
+            >
+                <div className='flex items-center gap-2'>
+                    {habit.completedToday ? (
+                        <CheckCircle2 className="w-5 h-5 text-green-500" />
+                    ) : (
+                        <Circle className="w-5 h-5 text-white/20" />
+                    )}
+                    <h2 className="text-xl font-semibold text-white/80">{habit.title}</h2>
+                </div>
+                {isExpanded ? <ChevronUp className="w-6 h-6 text-white/60" /> : <ChevronDown className="w-6 h-6 text-white/60" />}
+            </div>
+            <div className={cn(
+                "transition-all duration-300 ease-in-out overflow-hidden",
+                isExpanded ? "opacity-100" : "opacity-0 h-0"
+            )}>
+                <HabitTracker
+                    title={habit.title}
+                    habitId={habit.id}
+                    entries={habit.entries}
+                    className={cn(
+                        "pt-2",
+                        index === totalHabits - 1 && "border-none"
+                    )}
+                />
+            </div>
+        </div>
+    );
 }

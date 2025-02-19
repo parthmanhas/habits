@@ -1,13 +1,11 @@
 import { AddHabit } from "@/components/AddHabit";
-import { HabitTracker } from "@/components/HabitTracker";
 import { InfoButton } from "@/components/InfoButton";
 import { SignIn } from "@/components/SignIn";
 import { auth } from "@/lib/auth";
 import { SignOut } from "@/components/SignOut";
 import { getHabits } from "@/lib/habits";
-import { cn } from "@/lib/utils";
-import { ExpandableHabit } from "@/components/ExpandableHabit";
 import { HabitList } from "@/components/HabitList";
+import { isCompletedToday } from "@/lib/habitUtils";
 
 export default async function Home() {
   const session = await auth();
@@ -30,6 +28,11 @@ export default async function Home() {
   }
   const habits = await getHabits(session.user.id);
 
+  const habitsWithStatus = habits.map(habit => ({
+    ...habit,
+    completedToday: isCompletedToday(habit.entries)
+  }));
+
   return (
     <div className="min-h-screen p-8 bg-black">
       <main className="w-full mx-auto">
@@ -38,7 +41,16 @@ export default async function Home() {
             <h1 className="text-3xl font-bold text-white/80">habits</h1>
             <InfoButton />
           </div>
-          <SignOut />
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-sm text-white/60">
+              <span>Today:</span>
+              <span className="text-white/80">
+                {habitsWithStatus.filter(h => h.completedToday).length}/{habits.length}
+              </span>
+              completed
+            </div>
+            <SignOut />
+          </div>
         </div>
         <AddHabit />
         {habits.length === 0 ? (
@@ -47,7 +59,7 @@ export default async function Home() {
             <p className="text-sm text-center">Click the &quot;add new habit&quot; button above to get started</p>
           </div>
         ) : (
-          <HabitList habits={habits} />
+          <HabitList habits={habitsWithStatus} />
         )}
       </main>
     </div>
