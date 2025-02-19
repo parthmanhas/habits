@@ -9,7 +9,7 @@ import { Sparkles } from "lucide-react";
 import { useCallback, useRef, useState, useTransition, useEffect } from "react";
 import { debounce } from "lodash";  // Add this import
 
-export function HabitCell({ id: initialId, habitId, date, count: initialCount, onHabitCellUpdate }: HabitEntry & { onHabitCellUpdate?: (count: number) => void }) {
+export function HabitCell({ id: initialId, habitId, date, count: initialCount }: HabitEntry) {
     assert(habitId !== 'placeholder' || habitId, 'Habit ID is required');
 
     const [count, setCount] = useState(initialCount);
@@ -31,7 +31,6 @@ export function HabitCell({ id: initialId, habitId, date, count: initialCount, o
                 }
             } catch (error) {
                 setCount(count);
-                onHabitCellUpdate?.(count);
                 console.error('Failed to update entry:', error);
             }
         }, 1000) // Increased debounce time to 1 seconds
@@ -50,7 +49,6 @@ export function HabitCell({ id: initialId, habitId, date, count: initialCount, o
             const previousCount = count;
             const previousId = id;
             setCount(0);
-            onHabitCellUpdate?.(0);
             setId(`${dayjs(date).format('YYYY-MM-DD')}-empty`);
 
             // Update server in transition
@@ -60,13 +58,11 @@ export function HabitCell({ id: initialId, habitId, date, count: initialCount, o
                     if (!deleted) {
                         // Revert on failure
                         setCount(previousCount);
-                        onHabitCellUpdate?.(previousCount);
                         setId(previousId);
                     }
                 } catch (error) {
                     // Revert on error
                     setCount(previousCount);
-                    onHabitCellUpdate?.(previousCount);
                     setId(previousId);
                     console.error('Failed to delete entry:', error);
                 }
@@ -89,13 +85,12 @@ export function HabitCell({ id: initialId, habitId, date, count: initialCount, o
 
         // Optimistically update UI immediately
         setCount(newCount);
-        onHabitCellUpdate?.(newCount);
 
         // Queue the debounced update
         startTransition(() => {
             debouncedUpdateRef.current(newCount, isNewEntry, id);
         });
-    }, [isLongPress, isPending, date, id, count, onHabitCellUpdate]);
+    }, [isLongPress, isPending, date, id, count]);
 
     const startPressTimer = useCallback(() => {
         setIsLongPress(false);

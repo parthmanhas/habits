@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { HabitTracker } from './HabitTracker';
 import { cn } from '@/lib/utils';
 import { CheckCircle2, ChevronDown, ChevronUp, Circle } from 'lucide-react';
@@ -35,20 +34,8 @@ export function ExpandableHabit({
     isExpanded,
     onToggle
 }: ExpandableHabitProps) {
-    const [isLocallyCompleted, setIsLocallyCompleted] = useState(habit.completedToday);
 
-    // Sync with prop changes
-    useEffect(() => {
-        setIsLocallyCompleted(habit.completedToday);
-    }, [habit.completedToday]);
-
-    const handleHabitCellUpdate = (newCount: number) => {
-        requestAnimationFrame(() => {
-            setIsLocallyCompleted(newCount > 0);
-        });
-    };
-
-    const completionIcon = isLocallyCompleted ? (
+    const completionIcon = habit.completedToday ? (
         <CheckCircle2 className="w-5 h-5 text-green-500" />
     ) : (
         <Circle className="w-5 h-5 text-white/20" />
@@ -82,7 +69,6 @@ export function ExpandableHabit({
                         "pt-2",
                         index === totalHabits - 1 && "border-none"
                     )} 
-                    onHabitCellUpdate={handleHabitCellUpdate}
                 />
             </div>
         </div>
