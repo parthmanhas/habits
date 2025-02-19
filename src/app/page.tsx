@@ -49,7 +49,7 @@ export default async function Home() {
             <InfoButton />
           </div>
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-sm text-white/60">
+            <div className="hidden sm:flex items-center gap-2 text-sm text-white/60">
               <span>Today:</span>
               <span className="text-white/80">
                 {habitsWithStatus.filter(h => h.completedToday).length}/{habits.length}
