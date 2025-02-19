@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { ExpandableHabit } from './ExpandableHabit';
 import { HabitControls } from './HabitControls';
 
@@ -39,11 +39,6 @@ export function HabitList({ habits }: HabitListProps) {
         });
     }, [habits]);
 
-    useEffect(() => {
-        if (sortedHabits.length > 0) {
-            setExpandedHabits(new Set([sortedHabits[0].id]));
-        }
-    }, []); // Only run once on mount
 
     const handleExpandAll = () => {
         setExpandedHabits(new Set(habits.map(habit => habit.id)));

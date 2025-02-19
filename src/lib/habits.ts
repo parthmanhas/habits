@@ -10,10 +10,10 @@ export async function getHabits(userId: string) {
       entries: true
     }
   });
-  return habits.map(habit => ({
+  
+  const habitsWithCompletedToday = habits.map(habit => ({
     ...habit,
-    completedToday: habit.entries.some(entry =>
-      dayjs(entry.date).isSame(new Date) && entry.count > 0
-    ),
-  }));
+    completedToday: habit.entries.some(entry => dayjs(entry.date).isSame(new Date(), 'day'))
+  }))
+  return habitsWithCompletedToday;
 }

@@ -35,7 +35,6 @@ export function ExpandableHabit({
     isExpanded,
     onToggle
 }: ExpandableHabitProps) {
-    console.log(habit)
     const [isLocallyCompleted, setIsLocallyCompleted] = useState(habit.completedToday);
 
     // Sync local state with prop when it changes
