@@ -6,7 +6,6 @@ import { auth } from "@/lib/auth";
 import { SignOut } from "@/components/SignOut";
 import { getHabits } from "@/lib/habits";
 import { HabitList } from "@/components/HabitList";
-import { isCompletedToday } from "@/lib/habitUtils";
 
 export default async function Home() {
   const session = await auth();
@@ -42,14 +41,6 @@ export default async function Home() {
 // Move async logic to a separate server component
 async function HabitsSection({ userId }: { userId: string }) {
   const habits = await getHabits(userId);
-
-  const habitsWithStatus = habits
-    .map(habit => ({
-      ...habit,
-      completedToday: isCompletedToday(habit.entries)
-    }))
-    .sort((a, b) => (a.completedToday === b.completedToday ? 0 : a.completedToday ? 1 : -1));
-
   return (
     <>
       <div className="flex justify-between items-center mb-8">
@@ -58,13 +49,6 @@ async function HabitsSection({ userId }: { userId: string }) {
           <InfoButton />
         </div>
         <div className="flex items-center gap-4">
-          <div className="hidden sm:flex items-center gap-2 text-sm text-white/60">
-            <span>Today:</span>
-            <span className="text-white/80">
-              {habitsWithStatus.filter(h => h.completedToday).length}/{habits.length}
-            </span>
-            completed
-          </div>
           <SignOut />
         </div>
       </div>
@@ -75,7 +59,7 @@ async function HabitsSection({ userId }: { userId: string }) {
           <p className="text-sm text-center">Click the &quot;add new habit&quot; button above to get started</p>
         </div>
       ) : (
-        <HabitList habits={habitsWithStatus} />
+        <HabitList habits={habits} />
       )}
     </>
   );

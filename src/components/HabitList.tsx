@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { ExpandableHabit } from './ExpandableHabit';
 import { HabitControls } from './HabitControls';
 
-type HabitsWithStatus = {
+type Habit = {
     completedToday: boolean;
     entries: {
         id: string;
@@ -19,13 +19,14 @@ type HabitsWithStatus = {
     userId: string;
     createdAt: Date;
     updatedAt: Date;
-}[]
+}
 
 interface HabitListProps {
-    habits: HabitsWithStatus;
+    habits: Habit[];
 }
 
 export function HabitList({ habits }: HabitListProps) {
+
     const [expandedHabits, setExpandedHabits] = useState<Set<string>>(
         new Set([habits[0]?.id])
     );
