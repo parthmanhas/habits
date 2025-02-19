@@ -28,10 +28,17 @@ export default async function Home() {
   }
   const habits = await getHabits(session.user.id);
 
-  const habitsWithStatus = habits.map(habit => ({
-    ...habit,
-    completedToday: isCompletedToday(habit.entries)
-  }));
+  const habitsWithStatus = habits
+    .map(habit => ({
+      ...habit,
+      completedToday: isCompletedToday(habit.entries)
+    }))
+    .sort((a, b) => {
+      if (a.completedToday === b.completedToday) {
+        return 0;
+      }
+      return a.completedToday ? 1 : -1;
+    });
 
   return (
     <div className="min-h-screen p-8 bg-black">
