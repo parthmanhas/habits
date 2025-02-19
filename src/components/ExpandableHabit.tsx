@@ -2,7 +2,7 @@
 
 import { HabitTracker } from './HabitTracker';
 import { cn } from '@/lib/utils';
-import { CheckCircle2, ChevronDown, ChevronUp, Circle } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface ExpandableHabitProps {
     habit: {
