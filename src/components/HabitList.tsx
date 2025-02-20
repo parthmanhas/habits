@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react';
 import { ExpandableHabit } from './ExpandableHabit';
 import { HabitControls } from './HabitControls';
 import dayjs from 'dayjs';
+import { motion } from "framer-motion";
 
 type Habit = {
     entries: {
@@ -30,7 +31,7 @@ export function HabitList({ habits }: HabitListProps) {
 
     const habitsWithCompletedToday = habits.map(habit => ({
         ...habit,
-        completedToday: habit.entries.some(entry => 
+        completedToday: habit.entries.some(entry =>
             dayjs(entry.date).isSame(new Date(), 'day')
         )
     }));
@@ -75,7 +76,12 @@ export function HabitList({ habits }: HabitListProps) {
             </div>
             <div className="flex flex-col">
                 {sortedHabits.map((habit, index) => (
-                    <div key={habit.id} className="flex items-center gap-2">
+                    <motion.div
+                        key={habit.id}
+                        className="flex items-center gap-2"
+                        layout // Enables smooth position animation
+                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    >
                         <ExpandableHabit
                             habit={habit}
                             index={index}
@@ -83,7 +89,7 @@ export function HabitList({ habits }: HabitListProps) {
                             isExpanded={expandedHabits.has(habit.id)}
                             onToggle={() => toggleHabit(habit.id)}
                         />
-                    </div>
+                    </motion.div>
                 ))}
             </div>
         </div>

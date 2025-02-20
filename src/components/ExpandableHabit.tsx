@@ -2,8 +2,11 @@
 
 import { HabitTracker } from './HabitTracker';
 import { cn } from '@/lib/utils';
+import dayjs from 'dayjs';
 import { CheckCircle2, ChevronDown, ChevronUp, Circle } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { motion } from "framer-motion";
+
 
 interface ExpandableHabitProps {
     habit: {
@@ -42,9 +45,9 @@ export function ExpandableHabit({
         setIsLocallyCompleted(habit.completedToday);
     }, [habit.completedToday]);
 
-    const handleHabitCellUpdate = (newCount: number) => {
+    const handleHabitCellUpdate = (newCount: number, date: Date) => {
         // Update local completion status optimistically
-        setIsLocallyCompleted(newCount > 0);
+        setIsLocallyCompleted(newCount > 0 && dayjs(date).isSame(new Date(), 'day'));
     };
 
     const completionIcon = isLocallyCompleted ? (
@@ -54,11 +57,13 @@ export function ExpandableHabit({
     );
 
     return (
-        <div className={cn(
-            "transition-all duration-300 ease-in-out",
-            isExpanded ? "h-auto" : "h-20",
-            "relative overflow-x-auto"
-        )}>
+        <motion.div
+            className={cn(
+                "relative overflow-x-auto"
+            )}
+            animate={{ height: isExpanded ? "70vh" : "5rem" }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+        >
             <div
                 className="flex items-center justify-between cursor-pointer p-4 hover:bg-white/5 rounded-t"
                 onClick={onToggle}
@@ -80,10 +85,10 @@ export function ExpandableHabit({
                     className={cn(
                         "pt-2",
                         index === totalHabits - 1 && "border-none"
-                    )} 
+                    )}
                     onHabitCellUpdate={handleHabitCellUpdate}
                 />
             </div>
-        </div>
+        </motion.div>
     );
 }

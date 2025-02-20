@@ -10,7 +10,7 @@ interface HabitTrackerProps {
     habitId: string;
     entries: HabitEntry[];
     className?: string;
-    onHabitCellUpdate: (newCount: number) => void
+    onHabitCellUpdate: (newCount: number, date: Date) => void
 }
 
 export function HabitTracker({ title = '', habitId, entries = [], className, onHabitCellUpdate }: HabitTrackerProps) {
