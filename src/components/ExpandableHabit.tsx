@@ -61,8 +61,8 @@ export function ExpandableHabit({
             className={cn(
                 "relative overflow-x-auto"
             )}
-            animate={{ height: isExpanded ? "70vh" : "5rem" }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
+            animate={{ height: isExpanded ? "100vh" : "5rem" }}
+            transition={{ duration: 0.3 }}
         >
             <div
                 className="flex items-center justify-between cursor-pointer p-4 hover:bg-white/5 rounded-t"
