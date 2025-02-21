@@ -46,6 +46,7 @@ export function ExpandableHabit({
     }, [habit.completedToday]);
 
     const handleHabitCellUpdate = (newCount: number, date: Date) => {
+        if (!dayjs(date).isSame(new Date(), 'day')) return;
         // Update local completion status optimistically
         setIsLocallyCompleted(newCount > 0 && dayjs(date).isSame(new Date(), 'day'));
     };
@@ -61,7 +62,7 @@ export function ExpandableHabit({
             className={cn(
                 "relative overflow-x-auto"
             )}
-            animate={{ height: isExpanded ? "100vh" : "5rem" }}
+            animate={{ height: isExpanded ? "130vh" : "5rem" }}
             transition={{ duration: 0.3 }}
         >
             <div
